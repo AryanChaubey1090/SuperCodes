@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TripSplit – Trip Expense Calculator</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="navbar">
+  <div class="nav-brand"><span class="logo-icon">✈</span> TripSplit</div>
+  <ul class="nav-links">
+    <li><a href="#dashboard" class="nav-btn active" onclick="showPage('dashboard')">Dashboard</a></li>
+    <li><a href="#trips" class="nav-btn" onclick="showPage('trips')">My Trips</a></li>
+    <li><a href="#members" class="nav-btn" onclick="showPage('members')">Members</a></li>
+    <li><a href="#settlement" class="nav-btn" onclick="showPage('settlement')">Settlement</a></li>
+    <li><a href="#report" class="nav-btn" onclick="showPage('report')">Report</a></li>
+  </ul>
+  <button class="btn-primary" onclick="openModal('tripModal')">+ New Trip</button>
+</nav>
+
+<!-- PAGES WRAPPER -->
+<main>
+
+  <!-- DASHBOARD PAGE -->
+  <section id="page-dashboard" class="page active">
+    <div class="hero">
+      <div class="hero-text">
+        <p class="hero-sub">Your Travel Finance Hub</p>
+        <h1>Track Every Rupee,<br/><span class="accent">Every Journey</span></h1>
+        <p class="hero-desc">Split bills, track expenses, and settle up with friends seamlessly on every adventure.</p>
+        <div class="hero-btns">
+          <button class="btn-primary" onclick="openModal('tripModal')">Start a New Trip</button>
+          <button class="btn-outline" onclick="showPage('trips')">View All Trips</button>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="float-card fc1"><i class="fas fa-plane"></i><span>Goa Trip</span><strong>₹12,400</strong></div>
+        <div class="float-card fc2"><i class="fas fa-mountain"></i><span>Manali</span><strong>₹8,900</strong></div>
+        <div class="float-card fc3"><i class="fas fa-check-circle"></i><span>Settled</span><strong>₹3,200</strong></div>
+        <div class="globe">🌍</div>
+      </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-grid" id="statsGrid">
+      <div class="stat-card">
+        <div class="stat-icon orange"><i class="fas fa-route"></i></div>
+        <div>
+          <p class="stat-label">Total Trips</p>
+          <h2 class="stat-val" id="stat-trips">0</h2>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon green"><i class="fas fa-wallet"></i></div>
+        <div>
+          <p class="stat-label">Total Spent</p>
+          <h2 class="stat-val" id="stat-spent">₹0</h2>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon blue"><i class="fas fa-users"></i></div>
+        <div>
+          <p class="stat-label">Members</p>
+          <h2 class="stat-val" id="stat-members">0</h2>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon red"><i class="fas fa-hand-holding-usd"></i></div>
+        <div>
+          <p class="stat-label">Pending Settlement</p>
+          <h2 class="stat-val" id="stat-pending">₹0</h2>
+        </div>
+      </div>
+    </div>
+
+    <!-- RECENT EXPENSES -->
+    <div class="section-header">
+      <h2>Recent Expenses</h2>
+    </div>
+    <div class="table-wrap">
+      <table class="exp-table" id="recentTable">
+        <thead>
+          <tr><th>Date</th><th>Trip</th><th>Category</th><th>Description</th><th>Paid By</th><th>Amount</th></tr>
+        </thead>
+        <tbody id="recentBody">
+          <tr><td colspan="6" class="empty-row">No expenses yet. Create a trip and add expenses!</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- TRIPS PAGE -->
+  <section id="page-trips" class="page">
+    <div class="section-header">
+      <h2>My Trips</h2>
+      <button class="btn-primary" onclick="openModal('tripModal')">+ New Trip</button>
+    </div>
+    <div class="trips-grid" id="tripsGrid">
+      <div class="empty-state">
+        <div class="empty-icon">🗺️</div>
+        <p>No trips yet. Start your first adventure!</p>
+        <button class="btn-primary" onclick="openModal('tripModal')">Create Trip</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MEMBERS PAGE -->
+  <section id="page-members" class="page">
+    <div class="section-header">
+      <h2>Trip Members</h2>
+      <button class="btn-primary" onclick="openModal('memberModal')">+ Add Member</button>
+    </div>
+    <div class="members-grid" id="membersGrid">
+      <div class="empty-state">
+        <div class="empty-icon">👥</div>
+        <p>No members added yet.</p>
+        <button class="btn-primary" onclick="openModal('memberModal')">Add Member</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- SETTLEMENT PAGE -->
+  <section id="page-settlement" class="page">
+    <div class="section-header">
+      <h2>Expense Settlement</h2>
+      <div class="filter-bar">
+        <label>Select Trip:</label>
+        <select id="settlementTripFilter" onchange="renderSettlement()">
+          <option value="all">All Trips</option>
+        </select>
+      </div>
+    </div>
+    <div id="settlementContent">
+      <div class="empty-state">
+        <div class="empty-icon">💸</div>
+        <p>Add trips and expenses to see settlement details.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- REPORT PAGE -->
+  <section id="page-report" class="page">
+    <div class="section-header">
+      <h2>Expense Report</h2>
+      <div class="filter-bar">
+        <label>Trip:</label>
+        <select id="reportTripFilter" onchange="renderReport()">
+          <option value="all">All Trips</option>
+        </select>
+        <button class="btn-primary" onclick="printReport()" style="margin-left:10px">
+          🖨️ Print / Export PDF
+        </button>
+      </div>
+    </div>
+    <div id="reportContent">
+      <div class="charts-row">
+        <div class="chart-card">
+          <h3>Spending by Category</h3>
+          <canvas id="categoryChart" width="340" height="280"></canvas>
+        </div>
+        <div class="chart-card">
+          <h3>Per-Person Spending</h3>
+          <canvas id="personChart" width="340" height="280"></canvas>
+        </div>
+      </div>
+      <div class="table-wrap mt20">
+        <table class="exp-table">
+          <thead><tr><th>Member</th><th>Total Paid</th><th>Fair Share</th><th>Balance</th></tr></thead>
+          <tbody id="reportTable"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- EXPENSE SIDEBAR (opens when viewing a trip) -->
+<div id="expenseSidebar" class="sidebar hidden">
+  <div class="sidebar-header">
+    <h3 id="sidebarTripName">Trip Expenses</h3>
+    <button class="close-btn" onclick="closeSidebar()">✕</button>
+  </div>
+  <button class="btn-primary full-width" onclick="openModal('expenseModal')">+ Add Expense</button>
+  <div id="sidebarExpenses" class="sidebar-expenses"></div>
+</div>
+<div id="sidebarOverlay" class="overlay hidden" onclick="closeSidebar()"></div>
+
+<!-- =================== MODALS =================== -->
+
+<!-- NEW TRIP MODAL -->
+<div id="tripModal" class="modal hidden">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>✈ Create New Trip</h3>
+      <button class="close-btn" onclick="closeModal('tripModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <label>Trip Name *</label>
+      <input type="text" id="tripName" placeholder="e.g. Goa Vacation 2025" />
+      <label>Destination *</label>
+      <input type="text" id="tripDest" placeholder="e.g. Goa, India" />
+      <div class="form-row">
+        <div>
+          <label>Start Date *</label>
+          <input type="date" id="tripStart" />
+        </div>
+        <div>
+          <label>End Date *</label>
+          <input type="date" id="tripEnd" />
+        </div>
+      </div>
+      <label>Total Budget (₹)</label>
+      <input type="number" id="tripBudget" placeholder="e.g. 15000" />
+      <label>Trip Type</label>
+      <select id="tripType">
+        <option value="leisure">🏖 Leisure / Vacation</option>
+        <option value="adventure">🏔 Adventure</option>
+        <option value="business">💼 Business</option>
+        <option value="family">👨‍👩‍👧 Family</option>
+        <option value="pilgrimage">🛕 Pilgrimage</option>
+        <option value="other">📍 Other</option>
+      </select>
+      <label>Description</label>
+      <textarea id="tripDesc" rows="2" placeholder="Short description..."></textarea>
+
+      <div class="members-inline-section">
+        <label class="members-inline-label">👥 Add Members to This Trip</label>
+        <div id="tripMembersList" class="trip-members-list"></div>
+        <div class="add-member-inline-row">
+          <input type="text" id="inlineMemberName" placeholder="Member name" onkeydown="if(event.key==='Enter'){event.preventDefault();addInlineMember();}" />
+          <input type="email" id="inlineMemberEmail" placeholder="Email (optional)" onkeydown="if(event.key==='Enter'){event.preventDefault();addInlineMember();}" />
+          <button type="button" class="btn-outline btn-sm" onclick="addInlineMember()">+ Add</button>
+        </div>
+        <p class="inline-member-hint">You can also add members later from the Members page.</p>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-outline" onclick="closeModal('tripModal')">Cancel</button>
+      <button class="btn-primary" onclick="saveTrip()">Create Trip</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD MEMBER MODAL -->
+<div id="memberModal" class="modal hidden">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>👤 Add Member</h3>
+      <button class="close-btn" onclick="closeModal('memberModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <label>Member Name *</label>
+      <input type="text" id="memberName" placeholder="Full name" />
+      <label>Email</label>
+      <input type="email" id="memberEmail" placeholder="email@example.com" />
+      <label>Phone</label>
+      <input type="tel" id="memberPhone" placeholder="+91 9XXXXXXXXX" />
+      <label>Assign to Trip</label>
+      <select id="memberTrip">
+        <option value="">-- Select Trip --</option>
+      </select>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-outline" onclick="closeModal('memberModal')">Cancel</button>
+      <button class="btn-primary" onclick="saveMember()">Add Member</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD EXPENSE MODAL -->
+<div id="expenseModal" class="modal hidden">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>💳 Add Expense</h3>
+      <button class="close-btn" onclick="closeModal('expenseModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <label>Trip *</label>
+      <select id="expTrip" onchange="populatePaidBy()">
+        <option value="">-- Select Trip --</option>
+      </select>
+      <label>Description *</label>
+      <input type="text" id="expDesc" placeholder="e.g. Hotel booking" />
+      <label>Category *</label>
+      <select id="expCat">
+        <option value="transport">🚗 Transport</option>
+        <option value="accommodation">🏨 Accommodation</option>
+        <option value="food">🍛 Food & Dining</option>
+        <option value="activities">🎡 Activities</option>
+        <option value="shopping">🛍 Shopping</option>
+        <option value="medical">💊 Medical</option>
+        <option value="fuel">⛽ Fuel</option>
+        <option value="other">📦 Other</option>
+      </select>
+      <div class="form-row">
+        <div>
+          <label>Amount (₹) *</label>
+          <input type="number" id="expAmount" placeholder="0.00" />
+        </div>
+        <div>
+          <label>Date *</label>
+          <input type="date" id="expDate" />
+        </div>
+      </div>
+      <label>Paid By *</label>
+      <select id="expPaidBy">
+        <option value="">-- Select Member --</option>
+      </select>
+      <label>Split Among</label>
+      <div id="splitCheckboxes" class="checkbox-group"></div>
+      <label>Notes</label>
+      <input type="text" id="expNotes" placeholder="Optional notes..." />
+    </div>
+    <div class="modal-footer">
+      <button class="btn-outline" onclick="closeModal('expenseModal')">Cancel</button>
+      <button class="btn-primary" onclick="saveExpense()">Add Expense</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast" class="toast hidden"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
